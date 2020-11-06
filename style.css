@@ -1,0 +1,21 @@
+*,body,html{
+    margin:0
+}
+div#plane{
+    width: 80%;
+    height: 400px;
+    border: 3px solid rgb(19, 19, 36);
+    margin: 100px auto;
+    position: relative;
+    border-radius: 7px;
+}
+.circle {
+    position: absolute;
+    background: rgb(19, 19, 36);
+    border-radius: 50%;
+    height: 15px;
+    width: 15px;
+  }
+.infected{
+    background: rgb(122, 19, 190);
+}
