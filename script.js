@@ -30,7 +30,7 @@ class Point {
     infecte() {
         $("#" + this.id).addClass("infected").attr('infected', 'true');
         this.infected = true
-        this.angle = this.angle + 1
+        this.angle = this.angle + 5
         this.move(this.angle)
 
     }
@@ -72,6 +72,9 @@ class Point {
             left: Math.floor(this.x)
         })
     }
+    remove(){
+        $("#" + this.id).remove()
+    }
 }
 
 //helper functions
@@ -105,6 +108,7 @@ function initSimulation(pointsNum = 10) { //init simulation function
     return points
 }
 
+var speed = 20
 async function startSimulation(points) { //start simulation function
     infected = new Set(); // a set to not include duplicates
     while (true) { //run non stop
@@ -126,8 +130,16 @@ async function startSimulation(points) { //start simulation function
             }
         }
         // console.log(infected.size)
-        await sleep(4); //sleep for 4 second to the next balls move
+        await sleep(speed); //sleep for 4 second to the next balls move
     }
 }
-var points = initSimulation(3) 
-startSimulation(points)
+
+$(document).ready(function(){
+    $('input[type=range]').on('input', function () {
+        speed = $(this).val();
+        console.log(speed)
+    });
+    var points = initSimulation(15) 
+    startSimulation(points)
+  });
+

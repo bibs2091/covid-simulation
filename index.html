@@ -3,14 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital@1&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <title>Simulation</title>
 </head>
 <body>
     <h1>Epidemic Simulator</h1>
-    <div id="plane">
+    <div class="container">
+        <div class="slidecontainer">
+            <label>Speed</label>
+            <input type="range" min="5" max="50" value="25" class="slider" id="speedRange">
+        </div>
+        <button>Restart</button>
+        <div class="slidecontainer">
+            <label>balls</label>
+            <input type="range" min="3" max="25" value="10" class="slider" id="ballsRange">
+        </div>
+          <div id="plane">
+        </div>
     </div>
+    
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="script.js"></script>
 </body>
