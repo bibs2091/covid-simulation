@@ -12,6 +12,23 @@ h1{
 .container{
     margin: 100px auto;
     width: 80%;
+    position: relative;
+}
+#restart{
+    position: absolute;
+    left: 50%;
+    top: 32px;
+    transform: translate(-50%, 0);
+    background-color: #7f8c8d; /* Green */
+    border: none;
+    color: white;
+    padding: 2px 12px;
+    font-size: 16px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+#restart:focus{
+    outline: none;
 }
 div#plane{
     width: 100%;
@@ -22,6 +39,11 @@ div#plane{
     border-radius: 4px;
     background-color: #ecf0f1;
 }
+@media (max-width: 800px) {
+    div#plane {
+        height: 290px;
+    }
+  }
 .slidecontainer{
     text-align: left;
     display: inline-block;
@@ -44,4 +66,7 @@ div#plane{
     width: 15px;
     background-color: #c0392b;
     border-radius: 60px;
+}
+#ballsRange{
+    width: 35px;
 }

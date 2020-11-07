@@ -4,8 +4,8 @@ class Point {
         this.plane = $("div#plane") //retrieve the div where we do the simulation
         var maxX = this.plane.width() - 15 //minus the size of the ball to not get too close to the wall 
         var maxY = this.plane.height() - 15
-        this.x = getRandomInt(0,maxX) //init the ball value in the x axis 
-        this.y = getRandomInt(0,maxY) //init the ball value in the y axis
+        this.x = getRandomInt(0, maxX) //init the ball value in the x axis 
+        this.y = getRandomInt(0, maxY) //init the ball value in the y axis
 
         this.display() //show the ball
         this.angle = this.direction() //init the ball's angle
@@ -72,7 +72,7 @@ class Point {
             left: Math.floor(this.x)
         })
     }
-    remove(){
+    remove() {
         $("#" + this.id).remove()
     }
 }
@@ -109,9 +109,11 @@ function initSimulation(pointsNum = 10) { //init simulation function
 }
 
 var speed = 20
-async function startSimulation(points) { //start simulation function
+var loop = true //to continue the simulation
+var balls = 10
+async function startSimulation(points,m) { //start simulation function
     infected = new Set(); // a set to not include duplicates
-    while (true) { //run non stop
+    while (loop == true) { //run non stop
         for (var i = 0; i < points.length; i++) {
             points[i].move(points[i].angle) //move the point i with the angle initialized in the class
 
@@ -130,16 +132,47 @@ async function startSimulation(points) { //start simulation function
             }
         }
         // console.log(infected.size)
-        await sleep(speed); //sleep for 4 second to the next balls move
+        await sleep(speed); //sleep for x ms to the next balls move
     }
+    
+
+
 }
 
-$(document).ready(function(){
-    $('input[type=range]').on('input', function () {
-        speed = $(this).val();
-        console.log(speed)
+$(document).ready(function () {
+    $('input[type=range]#speedRange').on('input', function () {
+        speed = Math.abs($(this).val() - 45);
     });
-    var points = initSimulation(15) 
-    startSimulation(points)
-  });
 
+    $('#ballsRange').on('change', async function () {
+        loop = false; //stop looping
+
+        //delete all existing balls
+        for (var i = 0; i < points.length; i++) {
+            points[i].remove()
+            del = false
+        }
+
+        await sleep(50); //sleep for x ms to the next balls move
+        //init with new balls value
+        balls = $(this).val()
+        points = initSimulation($(this).val())
+        loop = true;
+        startSimulation(points)
+    });
+
+    $('#restart').on('click', async function () {
+        loop = false; //stop looping
+        for (var i = 0; i < points.length; i++) {
+            points[i].remove()
+            del = false
+        }
+        await sleep(50); //sleep for x ms to the next balls move
+        points = initSimulation(balls)
+        loop = true;
+        startSimulation(points)
+    });
+
+    var points = initSimulation(balls)
+    startSimulation(points)
+});
