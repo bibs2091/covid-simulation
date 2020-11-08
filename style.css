@@ -11,7 +11,7 @@ h1{
 }
 .container{
     margin: 100px auto;
-    width: 80%;
+    width: 50%;
     position: relative;
 }
 #restart{
@@ -40,6 +40,9 @@ div#plane{
     background-color: #ecf0f1;
 }
 @media (max-width: 800px) {
+    .container{
+        width: 90%;
+    }
     div#plane {
         height: 290px;
     }
@@ -70,3 +73,16 @@ div#plane{
 #ballsRange{
     width: 35px;
 }
+#myChart{
+    width: 100% !important;
+    height: 600px!important;
+}
+
+@media (max-width: 800px) {
+    #myChart{
+        height: 300px!important;
+    }
+    #restart{
+        left: 60%;
+    }
+  }

@@ -1,6 +1,7 @@
 class Point {
-    constructor(id, infected = false) {
+    constructor(id, infected = false, quarantine_prob = 0) {
         this.id = id //declare id
+        this.quarantine = this.quarantined(quarantine_prob)
         this.plane = $("div#plane") //retrieve the div where we do the simulation
         var maxX = this.plane.width() - 15 //minus the size of the ball to not get too close to the wall 
         var maxY = this.plane.height() - 15
@@ -14,7 +15,6 @@ class Point {
             this.infecte() //infect the ball
         }
     }
-
     //show the ball in the place with the init x and y
     display() {
         this.circle = $("<div class='circle' id='" + this.id + "'></div>")
@@ -42,40 +42,46 @@ class Point {
 
     //change the position of the ball depending on the angle
     move(angle) {
-        // border right
-        if (this.x > (this.plane.width() - 17)) {
-            this.angle = this.direction(90, 270)
-        }
-        // border left
-        else if (this.x < 0) {
-            this.angle = this.direction(0, 90)
-        }
-        // border top
-        else if (this.y > (this.plane.height() - 17)) {
-            this.angle = this.direction(0, 180)
-        }
-        // border bottom
-        else if (this.y < 0) {
-            this.angle = this.direction(180, 360)
-        }
+        if (this.quarantine == false) {
+            // border right
+            if (this.x > (this.plane.width() - 17)) {
+                this.angle = this.direction(90, 270)
+            }
+            // border left
+            else if (this.x < 0) {
+                this.angle = this.direction(0, 90)
+            }
+            // border top
+            else if (this.y > (this.plane.height() - 17)) {
+                this.angle = this.direction(0, 180)
+            }
+            // border bottom
+            else if (this.y < 0) {
+                this.angle = this.direction(180, 360)
+            }
 
-        //what pixel to go to
-        let rads = angle * Math.PI / 180
-        let vx = Math.cos(rads)
-        let vy = Math.sin(rads)
-        this.x += vx
-        this.y -= vy
+            //what pixel to go to
+            let rads = angle * Math.PI / 180
+            let vx = Math.cos(rads)
+            let vy = Math.sin(rads)
+            this.x += vx
+            this.y -= vy
 
-        //change the position in css
-        $("#" + this.id).css({
-            bottom: Math.floor(this.y),
-            left: Math.floor(this.x)
-        })
+            //change the position in css
+            $("#" + this.id).css({
+                bottom: Math.floor(this.y),
+                left: Math.floor(this.x)
+            })
+        }
+    }
+    quarantined(quarantine = 0.5){
+        return 1 - (Math.random() >= quarantine);  
     }
     remove() {
         $("#" + this.id).remove()
     }
 }
+
 
 //helper functions
 
@@ -108,11 +114,36 @@ function initSimulation(pointsNum = 10) { //init simulation function
     return points
 }
 
+
+
+k = {
+    labels: [0],
+    datasets: [{
+        label: "infected",
+        fillColor: "rgba(220,0,0,0.2)",
+        strokeColor: "rgba(220,0,0,0.2)",
+        pointColor: "rgba(220,0,0,0.2)",
+        pointStrokeColor: "#f00",
+        data: [0]
+    }, ]
+};
 var speed = 20
 var loop = true //to continue the simulation
 var balls = 10
-async function startSimulation(points,m) { //start simulation function
+var ctx = $('#myChart');
+
+var myChart = new Chart(ctx, {
+    type: 'line',
+    data: k,
+    options: {
+        width: "200px",
+        backgroundColor: 'rgba(0, 255, 255, 0.8)'
+    }
+
+});
+async function startSimulation(points) { //start simulation function
     infected = new Set(); // a set to not include duplicates
+    let wwait = 0 //to avoid very slow speed when big balls numbers
     while (loop == true) { //run non stop
         for (var i = 0; i < points.length; i++) {
             points[i].move(points[i].angle) //move the point i with the angle initialized in the class
@@ -131,10 +162,16 @@ async function startSimulation(points,m) { //start simulation function
                 }
             }
         }
-        // console.log(infected.size)
-        await sleep(speed); //sleep for x ms to the next balls move
+        wwait += 1
+        if (wwait == 3) { //to avoid very slow speed when big balls numbers
+            wwait = 0
+            await sleep(speed); //sleep for x ms to the next balls move
+        }
+        k.labels.push(k.labels.length)
+        k.datasets[0].data.push(infected.size)
+        myChart.update()
     }
-    
+
 
 
 }
@@ -158,6 +195,9 @@ $(document).ready(function () {
         balls = $(this).val()
         points = initSimulation($(this).val())
         loop = true;
+        k.labels = [0]
+        k.datasets[0].data = [0]
+        myChart.update()
         startSimulation(points)
     });
 
