@@ -1,9 +1,9 @@
 //necesarry functions
-function initSimulation(pointsNum = 10) { //init simulation function
+function initSimulation(pointsNum = 10,quarantinedProbability = probs) { //init simulation function
     let points = [] //array of the balls 
     let infected = util.getRandomInt(0, pointsNum) //choose which ball is infected intially
     for (var i = 0; i < pointsNum; i++) {
-        point = new Point(i)
+        point = new Point(i,false,quarantinedProbability)
         if (i == infected) {
             point.infecte()
         }
@@ -44,6 +44,20 @@ async function startSimulation(points) { //start simulation function
 
     }
 }
+
+//restart function
+async function restart(){
+    loop = false; //stop looping
+    for (var i = 0; i < points.length; i++) {
+        points[i].remove()
+        del = false
+    }
+    await util.sleep(50); //sleep for x ms to the next balls move
+    points = initSimulation(balls)
+    loop = true;
+    startSimulation(points)
+}
+
 //chartjs
 k = {
     labels: [0],
@@ -72,7 +86,7 @@ var myChart = new Chart(ctx, {
 var speed = 20
 var loop = true //to continue the simulation
 var balls = 10
-
+var probs = 0
 $(document).ready(function () {
     //listeners
     $('input[type=range]#speedRange').on('input', function () {
@@ -97,20 +111,32 @@ $(document).ready(function () {
         myChart.update()
         startSimulation(points)
     });
-
-    $('#restart').on('click', async function () {
+    $('#probsRange').on('change', async function () {
         loop = false; //stop looping
+
+        //delete all existing balls
         for (var i = 0; i < points.length; i++) {
             points[i].remove()
             del = false
         }
         await util.sleep(50); //sleep for x ms to the next balls move
-        points = initSimulation(balls)
+        //init with new balls value
+        probs = $(this).val()
+        points = initSimulation(balls,probs)
         loop = true;
+        k.labels = [0]
+        k.datasets[0].data = [0]
+        myChart.update()
         startSimulation(points)
     });
     
-    //start here
-    var points = initSimulation(balls)
-    startSimulation(points)
+    $('#restart').on('click',  function () {
+        restart()
+    });
+    
+    
 });
+
+//start here
+var points = initSimulation(balls)
+startSimulation(points)

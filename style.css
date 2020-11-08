@@ -70,7 +70,7 @@ div#plane{
     background-color: #c0392b;
     border-radius: 60px;
 }
-#ballsRange{
+#ballsRange,#probsRange{
     width: 35px;
 }
 #myChart{
@@ -82,7 +82,15 @@ div#plane{
     #myChart{
         height: 300px!important;
     }
-    #restart{
-        left: 60%;
-    }
+
+  }
+
+  input[type = text]{
+    text-align: center;
+    margin: 0 auto;
+    display: block; 
+  }
+  #probs{
+    position: relative;
+    top: -25px;
   }
